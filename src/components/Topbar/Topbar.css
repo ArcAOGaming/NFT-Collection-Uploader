@@ -1,0 +1,33 @@
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 999;
+}
+
+.walletSection {
+  margin-left: auto;
+  padding: 0 16px;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.topbar-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.logo-link:hover .topbar-logo {
+  transform: scale(1.1);
+}

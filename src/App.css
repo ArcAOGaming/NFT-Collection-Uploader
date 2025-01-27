@@ -5,6 +5,16 @@
   text-align: center;
 }
 
-.read-the-docs {
-  color: #888;
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
 }
