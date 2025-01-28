@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useWallet } from '../../context/WalletContext';
 import { FileUploader } from '../FileUploader';
 import { NFTCollectionForm } from '../NFTCollectionForm';
 import { NFTCollectionPreview } from '../NFTCollectionPreview';
+import { NFTCollectionUploader } from '../NFTCollectionUploader';
 import './NFTCollectionCreator.css';
 
 interface CollectionData {
@@ -12,7 +14,8 @@ interface CollectionData {
 }
 
 export const NFTCollectionCreator: React.FC = () => {
-    const [step, setStep] = useState<'upload' | 'form' | 'preview'>('upload');
+    const { walletAddress } = useWallet();
+    const [step, setStep] = useState<'upload' | 'form' | 'preview' | 'uploading'>('upload');
     const [collectionImages, setCollectionImages] = useState<File[]>([]);
     const [collectionData, setCollectionData] = useState<CollectionData>({
         title: '',
@@ -44,12 +47,22 @@ export const NFTCollectionCreator: React.FC = () => {
         setStep('preview');
     };
 
+    const handleCreateCollection = () => {
+        setStep('uploading');
+    };
+
+    const handleUploadComplete = () => {
+        // Handle completion, e.g., redirect or show success message
+        console.log('Upload complete');
+    };
+
     return (
         <div className="nft-collection-creator">
             <h1 className="creator-title">
                 {step === 'upload' ? 'Upload Collection Images' :
                     step === 'form' ? 'Collection Details' :
-                        'Preview Collection'}
+                        step === 'preview' ? 'Preview Collection' :
+                            'Creating Collection'}
             </h1>
             {step === 'upload' ? (
                 <div className="creator-section">
@@ -107,7 +120,7 @@ export const NFTCollectionCreator: React.FC = () => {
                     onPrevious={handlePrevious}
                     onComplete={handleFormComplete}
                 />
-            ) : (
+            ) : step === 'preview' ? (
                 <NFTCollectionPreview
                     bannerImage={collectionData.bannerImage}
                     thumbnailImage={collectionData.thumbnailImage}
@@ -115,6 +128,15 @@ export const NFTCollectionCreator: React.FC = () => {
                     description={collectionData.description}
                     collectionImages={collectionImages}
                     onPrevious={handlePrevious}
+                    onComplete={handleCreateCollection}
+                />
+            ) : (
+                <NFTCollectionUploader
+                    title={collectionData.title}
+                    description={collectionData.description}
+                    collectionImages={collectionImages}
+                    walletAddress={walletAddress || ''}
+                    onComplete={handleUploadComplete}
                 />
             )}
         </div>

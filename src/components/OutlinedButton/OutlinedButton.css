@@ -25,9 +25,14 @@
 .outlined-button.disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
 }
 
-.outlined-button.disabled:hover {
+.outlined-button.disabled:hover,
+.outlined-button.disabled:active {
   background-color: transparent;
-  cursor: not-allowed;
+  transform: none;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
 }

@@ -5,7 +5,7 @@ import { useWallet } from '../../context/WalletContext';
 
 const ConnectWalletButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { isConnected, address, connect, disconnect } = useWallet();
+  const { walletAddress, connecting, connect, disconnect } = useWallet();
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -21,7 +21,7 @@ const ConnectWalletButton: React.FC = () => {
   };
 
   const handleClick = async () => {
-    if (isConnected) {
+    if (walletAddress) {
       await disconnect();
     } else {
       setIsLoading(true);
@@ -35,19 +35,20 @@ const ConnectWalletButton: React.FC = () => {
     }
   };
 
-  if (isConnected && address) {
+  if (walletAddress) {
     return (
       <OutlinedButton
-        text={shortenAddress(address)}
-        onClick={handleClick}
+        text={shortenAddress(walletAddress)}
+        onClick={() => copyToClipboard(walletAddress)}
       />
     );
   }
 
   return (
     <OutlinedButton
-      text={isLoading ? "Connecting..." : "Connect Wallet"}
+      text={connecting || isLoading ? "Connecting..." : "Connect Wallet"}
       onClick={handleClick}
+      disabled={connecting || isLoading}
     />
   );
 };

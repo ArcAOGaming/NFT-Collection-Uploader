@@ -8,6 +8,7 @@ interface NFTCollectionPreviewProps {
     description: string;
     collectionImages: File[];
     onPrevious: () => void;
+    onComplete: () => void;
 }
 
 export const NFTCollectionPreview: React.FC<NFTCollectionPreviewProps> = ({
@@ -16,7 +17,8 @@ export const NFTCollectionPreview: React.FC<NFTCollectionPreviewProps> = ({
     title,
     description,
     collectionImages,
-    onPrevious
+    onPrevious,
+    onComplete
 }) => {
     return (
         <div className="nft-collection-preview">
@@ -68,10 +70,7 @@ export const NFTCollectionPreview: React.FC<NFTCollectionPreviewProps> = ({
                 </button>
                 <button
                     className="navigation-button"
-                    onClick={() => {
-                        // TODO: Handle submission
-                        console.log('Submit collection');
-                    }}
+                    onClick={onComplete}
                 >
                     Create Collection
                 </button>

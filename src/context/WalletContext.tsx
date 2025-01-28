@@ -1,67 +1,87 @@
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface WalletContextType {
-  isConnected: boolean;
-  address: string | null;
+  walletAddress: string | null;
+  connecting: boolean;
   connect: () => Promise<void>;
   disconnect: () => void;
 }
 
-const WalletContext = createContext<WalletContextType | undefined>(undefined);
+const WalletContext = createContext<WalletContextType>({
+  walletAddress: null,
+  connecting: false,
+  connect: async () => { },
+  disconnect: () => { },
+});
 
-interface WalletProviderProps {
-  children: ReactNode;
-}
+export const useWallet = () => useContext(WalletContext);
 
-export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [address, setAddress] = useState<string | null>(null);
+export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [connecting, setConnecting] = useState(false);
 
-  const checkWalletConnection = useCallback(async () => {
-    if (window.arweaveWallet) {
-      try {
-        const address = await window.arweaveWallet.getActiveAddress();
-        if (address) {
-          setIsConnected(true);
-          setAddress(address);
+  useEffect(() => {
+    // Check if wallet is already connected
+    const checkConnection = async () => {
+      if (window.arweaveWallet) {
+        try {
+          const address = await window.arweaveWallet.getActiveAddress();
+          if (address) {
+            setWalletAddress(address);
+          }
+        } catch (error) {
+          console.error('Error checking wallet connection:', error);
         }
-      } catch (error) {
-        console.error('Error checking wallet connection:', error);
       }
-    }
+    };
+
+    checkConnection();
   }, []);
 
   const connect = async () => {
+    if (!window.arweaveWallet) {
+      alert('Please install ArConnect to use this feature');
+      return;
+    }
+
+    try {
+      setConnecting(true);
+      await window.arweaveWallet.connect([
+        'ACCESS_ADDRESS',
+        'SIGN_TRANSACTION',
+        'DISPATCH'
+      ]);
+      const address = await window.arweaveWallet.getActiveAddress();
+      setWalletAddress(address);
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      throw error;
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const disconnect = async () => {
     if (window.arweaveWallet) {
       try {
-        await window.arweaveWallet.connect(['ACCESS_ADDRESS', 'SIGN_TRANSACTION']);
-        await checkWalletConnection();
+        await window.arweaveWallet.disconnect();
+        setWalletAddress(null);
       } catch (error) {
-        console.error('Error connecting wallet:', error);
+        console.error('Error disconnecting wallet:', error);
       }
     }
   };
 
-  const disconnect = () => {
-    setIsConnected(false);
-    setAddress(null);
-  };
-
-  useEffect(() => {
-    checkWalletConnection();
-  }, [checkWalletConnection]);
-
   return (
-    <WalletContext.Provider value={{ isConnected, address, connect, disconnect }}>
+    <WalletContext.Provider
+      value={{
+        walletAddress,
+        connecting,
+        connect,
+        disconnect,
+      }}
+    >
       {children}
     </WalletContext.Provider>
   );
-};
-
-export const useWallet = () => {
-  const context = useContext(WalletContext);
-  if (context === undefined) {
-    throw new Error('useWallet must be used within a WalletProvider');
-  }
-  return context;
 };

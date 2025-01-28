@@ -1,0 +1,1 @@
+export { NFTCollectionUploader } from './NFTCollectionUploader';
