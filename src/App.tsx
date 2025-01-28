@@ -5,7 +5,7 @@ import ConnectWalletButton from './components/ConnectWalletButton';
 import { Topbar } from './components/Topbar';
 import { SocialLinks } from './components/SocialLinks';
 import { useWallet } from './context/WalletContext';
-import { FileUploader } from './components/FileUploader';
+import { NFTCollectionCreator } from './components/NFTCollectionCreator';
 
 const AppContent: React.FC = () => {
   const { isConnected } = useWallet();
@@ -18,7 +18,7 @@ const AppContent: React.FC = () => {
           <ConnectWalletButton />
         ) : (
           <div className="connected-content">
-            <FileUploader />
+            <NFTCollectionCreator />
           </div>
         )}
       </div>

@@ -1,0 +1,52 @@
+.text-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 1.5vw, 8px);
+    width: 100%;
+}
+
+.text-input-label {
+    display: flex;
+    gap: 4px;
+    color: #000;
+    font-size: clamp(12px, 2vw, 14px);
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+.text-input-label .required {
+    color: #000;
+}
+
+.text-input {
+    padding: clamp(10px, 2vw, 12px);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: transparent;
+    transition: all 0.3s ease;
+    font-family: monospace;
+    font-size: clamp(12px, 2vw, 14px);
+    color: #000;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.text-input.multiline {
+    min-height: clamp(100px, 20vh, 120px);
+    max-height: clamp(200px, 40vh, 400px);
+    resize: vertical;
+}
+
+@media (max-width: 480px) {
+    .text-input {
+        padding: 14px;
+        font-size: 16px;
+        /* Prevents zoom on mobile */
+    }
+}

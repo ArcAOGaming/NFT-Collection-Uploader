@@ -1,0 +1,1 @@
+export { NFTCollectionPreview } from './NFTCollectionPreview';
