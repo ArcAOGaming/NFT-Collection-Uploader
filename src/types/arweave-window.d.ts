@@ -1,11 +1,13 @@
-interface ArweaveWallet {
-    connect: (permissions: string[]) => Promise<void>;
-    disconnect: () => Promise<void>;
-    getActiveAddress: () => Promise<string>;
-}
+/// <reference types="vite/client" />
 
 declare global {
-    interface Window {
-        arweaveWallet?: ArweaveWallet;
-    }
+    var arweaveWallet: {
+        connect(permissions: string[]): Promise<void>;
+        disconnect(): Promise<void>;
+        getActiveAddress(): Promise<string>;
+    } | undefined;
+}
+
+declare interface Window {
+    arweaveWallet: typeof globalThis.arweaveWallet;
 }
