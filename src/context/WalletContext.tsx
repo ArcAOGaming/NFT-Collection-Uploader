@@ -5,6 +5,7 @@ interface WalletContextType {
   connecting: boolean;
   connect: () => Promise<void>;
   disconnect: () => void;
+  isConnected: boolean;
 }
 
 const WalletContext = createContext<WalletContextType>({
@@ -12,6 +13,7 @@ const WalletContext = createContext<WalletContextType>({
   connecting: false,
   connect: async () => { },
   disconnect: () => { },
+  isConnected: false,
 });
 
 export const useWallet = () => useContext(WalletContext);
@@ -79,6 +81,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         connecting,
         connect,
         disconnect,
+        isConnected: !!walletAddress,
       }}
     >
       {children}
