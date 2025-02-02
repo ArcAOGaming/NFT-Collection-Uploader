@@ -1,39 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextInput } from '../TextInput';
 import { FileUploader } from '../FileUploader';
-import { NFTCollectionFormData } from './types';
+import { useCollection } from '../../context/CollectionContext';
 import './NFTCollectionForm.css';
 
 interface NFTCollectionFormProps {
     onPrevious: () => void;
-    onComplete: (data: {
-        title: string;
-        description: string;
-        bannerImage: File | null;
-        thumbnailImage: File | null;
-    }) => void;
+    onComplete: () => void;
 }
 
 export const NFTCollectionForm: React.FC<NFTCollectionFormProps> = ({ onPrevious, onComplete }) => {
-    const [formData, setFormData] = useState<NFTCollectionFormData>({
-        title: '',
-        description: '',
-        bannerImage: null,
-        thumbnailImage: null
-    });
+    const {
+        collectionData,
+        setTitle,
+        setDescription,
+        setBannerImage,
+        setThumbnailImage
+    } = useCollection();
 
     const handleBannerChange = (files: File[]) => {
-        setFormData(prev => ({
-            ...prev,
-            bannerImage: files[0] || null
-        }));
+        setBannerImage(files[0] || null);
     };
 
     const handleThumbnailChange = (files: File[]) => {
-        setFormData(prev => ({
-            ...prev,
-            thumbnailImage: files[0] || null
-        }));
+        setThumbnailImage(files[0] || null);
     };
 
     return (
@@ -41,15 +31,13 @@ export const NFTCollectionForm: React.FC<NFTCollectionFormProps> = ({ onPrevious
             <div className="form-content">
                 <div className="form-section">
                     <div className="banner-section">
-                        {formData.bannerImage ? (
+                        {collectionData.bannerImage ? (
                             <div
                                 className="banner-preview"
-                                onClick={() => {
-                                    setFormData(prev => ({ ...prev, bannerImage: null }));
-                                }}
+                                onClick={() => setBannerImage(null)}
                             >
                                 <img
-                                    src={URL.createObjectURL(formData.bannerImage)}
+                                    src={URL.createObjectURL(collectionData.bannerImage)}
                                     alt="Banner Preview"
                                     className="banner-preview-image"
                                 />
@@ -67,15 +55,13 @@ export const NFTCollectionForm: React.FC<NFTCollectionFormProps> = ({ onPrevious
                             />
                         )}
                         <div className="thumbnail-overlay">
-                            {formData.thumbnailImage ? (
+                            {collectionData.thumbnailImage ? (
                                 <div
                                     className="thumbnail-preview"
-                                    onClick={() => {
-                                        setFormData(prev => ({ ...prev, thumbnailImage: null }));
-                                    }}
+                                    onClick={() => setThumbnailImage(null)}
                                 >
                                     <img
-                                        src={URL.createObjectURL(formData.thumbnailImage)}
+                                        src={URL.createObjectURL(collectionData.thumbnailImage)}
                                         alt="Thumbnail Preview"
                                         className="thumbnail-preview-image"
                                     />
@@ -100,15 +86,15 @@ export const NFTCollectionForm: React.FC<NFTCollectionFormProps> = ({ onPrevious
                 <div className="form-section">
                     <TextInput
                         label="Collection Title"
-                        value={formData.title}
-                        onChange={(value) => setFormData(prev => ({ ...prev, title: value }))}
+                        value={collectionData.title}
+                        onChange={setTitle}
                         required
                         placeholder="Enter collection title"
                     />
                     <TextInput
                         label="Description"
-                        value={formData.description}
-                        onChange={(value) => setFormData(prev => ({ ...prev, description: value }))}
+                        value={collectionData.description}
+                        onChange={setDescription}
                         multiline
                         placeholder="Enter collection description"
                     />
@@ -120,7 +106,7 @@ export const NFTCollectionForm: React.FC<NFTCollectionFormProps> = ({ onPrevious
                     </button>
                     <button
                         className="navigation-button"
-                        onClick={() => onComplete(formData)}
+                        onClick={onComplete}
                     >
                         Next
                     </button>

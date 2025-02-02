@@ -1,35 +1,23 @@
 import React, { useState } from 'react';
 import { useWallet } from '../../context/WalletContext';
+import { useCollection } from '../../context/CollectionContext';
 import { FileUploader } from '../FileUploader';
 import { NFTCollectionForm } from '../NFTCollectionForm';
 import { NFTCollectionPreview } from '../NFTCollectionPreview';
 import { NFTCollectionUploader } from '../NFTCollectionUploader';
 import './NFTCollectionCreator.css';
 
-interface CollectionData {
-    title: string;
-    description: string;
-    bannerImage: File | null;
-    thumbnailImage: File | null;
-}
-
 export const NFTCollectionCreator: React.FC = () => {
     const { walletAddress } = useWallet();
+    const { collectionData, setCollectionImages, removeCollectionImage } = useCollection();
     const [step, setStep] = useState<'upload' | 'form' | 'preview' | 'uploading'>('upload');
-    const [collectionImages, setCollectionImages] = useState<File[]>([]);
-    const [collectionData, setCollectionData] = useState<CollectionData>({
-        title: '',
-        description: '',
-        bannerImage: null,
-        thumbnailImage: null
-    });
 
     const handleFilesChange = (files: File[]) => {
         setCollectionImages(files);
     };
 
     const handleNext = () => {
-        if (collectionImages.length > 0) {
+        if (collectionData.collectionImages.length > 0) {
             setStep('form');
         }
     };
@@ -42,8 +30,7 @@ export const NFTCollectionCreator: React.FC = () => {
         }
     };
 
-    const handleFormComplete = (data: CollectionData) => {
-        setCollectionData(data);
+    const handleFormComplete = () => {
         setStep('preview');
     };
 
@@ -66,8 +53,8 @@ export const NFTCollectionCreator: React.FC = () => {
             </h1>
             {step === 'upload' ? (
                 <div className="creator-section">
-                    <div className={`upload-area ${collectionImages.length > 0 ? 'minimized' : ''}`}>
-                        {!collectionImages.length && (
+                    <div className={`upload-area ${collectionData.collectionImages.length > 0 ? 'minimized' : ''}`}>
+                        {!collectionData.collectionImages.length && (
                             <p className="creator-description">
                                 Upload the NFT images for your collection. These will be the individual NFTs that make up your collection.
                                 You can upload multiple images at once.
@@ -78,25 +65,22 @@ export const NFTCollectionCreator: React.FC = () => {
                             onFilesChange={handleFilesChange}
                             multiple={true}
                             width="100%"
-                            height={collectionImages.length > 0 ? "80px" : "auto"}
+                            height={collectionData.collectionImages.length > 0 ? "80px" : "auto"}
                             showFileList={false}
                         />
                     </div>
 
-                    <div className={`selected-files-area ${collectionImages.length > 0 ? 'visible' : ''}`}>
+                    <div className={`selected-files-area ${collectionData.collectionImages.length > 0 ? 'visible' : ''}`}>
                         <div className="selected-files-content">
                             <div className="selected-files">
-                                <h3>Selected Images ({collectionImages.length})</h3>
+                                <h3>Selected Images ({collectionData.collectionImages.length})</h3>
                                 <ul>
-                                    {collectionImages.map((file, index) => (
+                                    {collectionData.collectionImages.map((file, index) => (
                                         <li key={index}>
                                             {file.name} ({Math.round(file.size / 1024)} KB)
                                             <button
                                                 className="remove-file"
-                                                onClick={() => {
-                                                    const newFiles = collectionImages.filter((_, i) => i !== index);
-                                                    setCollectionImages(newFiles);
-                                                }}
+                                                onClick={() => removeCollectionImage(index)}
                                             >
                                                 ×
                                             </button>
@@ -126,7 +110,7 @@ export const NFTCollectionCreator: React.FC = () => {
                     thumbnailImage={collectionData.thumbnailImage}
                     title={collectionData.title}
                     description={collectionData.description}
-                    collectionImages={collectionImages}
+                    collectionImages={collectionData.collectionImages}
                     onPrevious={handlePrevious}
                     onComplete={handleCreateCollection}
                 />
@@ -134,7 +118,9 @@ export const NFTCollectionCreator: React.FC = () => {
                 <NFTCollectionUploader
                     title={collectionData.title}
                     description={collectionData.description}
-                    collectionImages={collectionImages}
+                    collectionImages={collectionData.collectionImages}
+                    bannerImage={collectionData.bannerImage}
+                    thumbnailImage={collectionData.thumbnailImage}
                     walletAddress={walletAddress || ''}
                     onComplete={handleUploadComplete}
                 />

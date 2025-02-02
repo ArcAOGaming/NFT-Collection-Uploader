@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { WalletProvider } from './context/WalletContext';
+import { CollectionProvider } from './context/CollectionContext';
 import ConnectWalletButton from './components/ConnectWalletButton/ConnectWalletButton';
 import { Topbar } from './components/Topbar';
 import { SocialLinks } from './components/SocialLinks';
@@ -32,7 +33,9 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <WalletProvider>
-      <AppContent />
+      <CollectionProvider>
+        <AppContent />
+      </CollectionProvider>
     </WalletProvider>
   );
 }
